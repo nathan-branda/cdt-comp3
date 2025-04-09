@@ -15,6 +15,7 @@ users=(
   "Alex"
   "Herobrine"
   "Nitwit"
+  "root"
 )
 
 # Must be root
