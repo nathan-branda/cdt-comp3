@@ -29,6 +29,7 @@ users=(
     "Herobrine"
     "ubuntu"
     "Nitwit"
+    "root"
 )
 
 echo "Starting password changes..."
