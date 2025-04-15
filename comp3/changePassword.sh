@@ -11,7 +11,7 @@ if [ "$(id -u)" -ne 0 ]; then
 fi
 
 # Base password (change this to your desired base password)
-base_password="3mDYp3!Cx.xh4S4"
+base_password="Your_Password_Here"
 
 # Array of users to change passwords for
 users=(
