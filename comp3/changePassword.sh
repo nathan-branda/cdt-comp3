@@ -1,66 +1,65 @@
 #!/bin/bash
 
-# Script to change passwords for multiple users in Ubuntu with password verification
-# This script must be run with root privileges
+# Script to change passwords for multiple users in Ubuntu (including root)
+# Requires root privileges and confirms before changing sensitive accounts
 
 # Check if running as root
 if [ "$(id -u)" -ne 0 ]; then
-    echo "Error: This script must be run as root"
-    echo "Please run with sudo: sudo $0"
+    echo "ERROR: This script must be run as root" >&2
+    echo "Use: sudo $0" >&2
     exit 1
 fi
 
 # Base password (change this to your desired base password)
-base_password="Your_Password_Here"
+base_password="!BlueTeam"
 
-# Array of users to change passwords for
+# List of users (customize as needed)
 users=(
-    "Armorer"
-    "Butcher"
-    "Cleric"
-    "Farmer"
-    "Fisherman"
-    "Fletcher"
-    "Leatherworker"
-    "Librarian"
-    "Toolsmith"
-    "Notch"
-    "Alex"
-    "Herobrine"
-    "ubuntu"
-    "Nitwit"
-    "root"
+    "Armorer" "Butcher" "Cleric" "Farmer" 
+    "Fisherman" "Fletcher" "Leatherworker" 
+    "Librarian" "Toolsmith" "Notch" 
+    "Alex" "Herobrine" "Nitwit"
+    "root"  # Explicitly included
 )
 
-echo "Starting password changes..."
-echo "================================="
+echo "=== Password Change Script ==="
+echo "WARNING: This will change passwords for ${#users[@]} accounts, including root."
+read -rp "Continue? (y/N): " confirm
+[[ "$confirm" != [yY] ]] && exit 1
 
-# Change passwords for each user
+# Main loop
 counter=1
 for username in "${users[@]}"; do
-    # Check if user exists
     if id "$username" &>/dev/null; then
-        # Create password variation with counter (e.g., BlueTeam1, BlueTeam2, etc.)
         new_password="${base_password}${counter}"
         
-        echo "Changing password for $username to ${new_password}..."
-        
-        # Change the password
-        echo "$username:$new_password" | chpasswd
-        
-        # Verify the password was changed
-        # This creates a test using the passwd command's check mode
-        if echo "$new_password" | passwd --stdin "$username" --status >/dev/null 2>&1; then
-            echo "VERIFICATION FAILED: Could not verify password for $username"
+        # Extra confirmation for root
+        if [ "$username" = "root" ]; then
+            echo "=== WARNING: Changing ROOT password ==="
+            read -rp "Proceed with root password change? (y/N): " root_confirm
+            [[ "$root_confirm" != [yY] ]] && continue
+        fi
+
+        echo "Changing password for $username..."
+        if ! echo "$username:$new_password" | chpasswd; then
+            echo "FAILED: $username" >&2
+            continue
+        fi
+
+        # Verification
+        pw_status=$(passwd -S "$username" 2>/dev/null | awk '{print $2}')
+        if [ "$pw_status" = "P" ]; then
+            echo "SUCCESS: $username password set"
+            ((counter++))  # Only increment on success
         else
-            # Check exit code - if it's 0, the password is correct
-            passwd_status=$(passwd -S "$username" | awk '{print $2}')
-            if [ "$passwd_status" = "P" ]; then
-                echo "SUCCESS: Password verified for $username"
-            else
-                echo "VERIFICATION FAILED: Password may not be set correctly for $username"
-            fi
+            echo "WARNING: Password may not be active for $username" >&2
         fi
     else
-        echo "WARNING: User $username does not exist"
+        echo "SKIPPED: User $username does not exist" >&2
     fi
+    echo "---------------------------------"
+done
+
+echo "=== Results ==="
+echo "Changed $(($counter-1)) passwords."
+echo "Store passwords securely!"
