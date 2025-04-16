@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Absolute paths to your ELK config files
+# Absolute paths to your config files
 FILES=(
   "/etc/samba/smb.conf"
   "/etc/ssh/ssh_config"
