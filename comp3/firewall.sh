@@ -90,14 +90,14 @@ iptables -t mangle -A OUTPUT -p udp --dport 53 -m state --state NEW,ESTABLISHED 
 iptables -t mangle -A INPUT  -p udp --sport 53 -m state --state ESTABLISHED -j ACCEPT
 
 # # Allow DNS Incoming (UDP)
-echo "> Allow Inbound DNS (UDP)"
-iptables -t mangle -A INPUT -p udp --dport 53 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -t mangle -A OUTPUT -p udp --sport 53 -m state --state ESTABLISHED -j ACCEPT
+#echo "> Allow Inbound DNS (UDP)"
+#iptables -t mangle -A INPUT -p udp --dport 53 -m state --state NEW,ESTABLISHED -j ACCEPT
+#iptables -t mangle -A OUTPUT -p udp --sport 53 -m state --state ESTABLISHED -j ACCEPT
 
 # # Allow SSH Outgoing
-# echo "> Allow Outbound SSH"
-# iptables -t mangle -A OUTPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
-# iptables -t mangle -A INPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+echo "> Allow Outbound SSH"
+iptables -t mangle -A OUTPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -t mangle -A INPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
 
 # # Accept Various Port Incoming
 # echo "> Various Port Incoming"
