@@ -6,7 +6,7 @@ FILES=(
   "/etc/ssh/ssh_config"
 )
 
-echo "[*] Changing ownership and permissions on ELK config files..."
+echo "[*] Changing ownership and permissions on config files..."
 
 for file in "${FILES[@]}"; do
   if [ -f "$file" ]; then
